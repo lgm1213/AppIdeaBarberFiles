@@ -1,0 +1,37 @@
+<div class="max-w-4xl mx-auto mt-10">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-bold text-4xl">Your Appointments</h1>
+    <%= link_to "New Appointment", new_appointment_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+
+  <% if @appointments.empty? %>
+    <p>You don't have any appointments yet.</p>
+  <% else %>
+    <div class="bg-white shadow-md rounded-lg">
+      <ul class="divide-y divide-gray-200">
+        <% @appointments.each do |appointment| %>
+          <li class="p-4">
+            <div class="flex justify-between">
+              <div>
+                <p><strong>Client:</strong> <%= appointment.client.email_address %></p>
+                <p><strong>Barber:</strong> <%= appointment.barber.email_address %></p>
+              </div>
+              <div>
+                <p><strong>From:</strong> <%= appointment.start_time.strftime("%A, %B %d, %Y at %I:%M %p") %></p>
+                <p><strong>To:</strong> <%= appointment.end_time.strftime("%A, %B %d, %Y at %I:%M %p") %></p>
+              </div>
+              <div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-<%= appointment.status == 'confirmed' ? 'green' : (appointment.status == 'pending' ? 'yellow' : 'red') %>-100 text-<%= appointment.status == 'confirmed' ? 'green' : (appointment.status == 'pending' ? 'yellow' : 'red') %>-800">
+                  <%= appointment.status.humanize %>
+                </span>
+                <% if current_user.client? && appointment.confirmed? && appointment.stripe_charge_id.nil? %>
+                  <%= link_to "Pay #{number_to_currency(appointment.amount / 100.0)}", new_appointment_payment_path(appointment), class: "ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>

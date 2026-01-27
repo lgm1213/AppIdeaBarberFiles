@@ -1,0 +1,24 @@
+<div class="max-w-4xl mx-auto mt-10">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-bold text-4xl">Your Shops</h1>
+    <%= link_to "New Shop", new_shop_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+
+  <% if @shops.empty? %>
+    <p>You don't have any shops yet.</p>
+  <% else %>
+    <div class="bg-white shadow-md rounded-lg">
+      <ul class="divide-y divide-gray-200">
+        <% @shops.each do |shop| %>
+          <li class="p-4 flex justify-between items-center">
+            <div>
+              <h2 class="font-bold text-xl"><%= shop.name %></h2>
+              <p><%= shop.address %></p>
+            </div>
+            <%= link_to "View Chairs", shop_chairs_path(shop), class: "bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>

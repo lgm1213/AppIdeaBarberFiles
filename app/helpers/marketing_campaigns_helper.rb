@@ -1,0 +1,2 @@
+module MarketingCampaignsHelper
+end

@@ -1,0 +1,34 @@
+<div class="max-w-4xl mx-auto mt-10">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-bold text-4xl">Chairs for <%= @shop.name %></h1>
+    <%= link_to "New Chair", new_shop_chair_path(@shop), class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+
+  <% if @chairs.empty? %>
+    <p>This shop doesn't have any chairs yet.</p>
+  <% else %>
+    <div class="bg-white shadow-md rounded-lg">
+      <ul class="divide-y divide-gray-200">
+        <% @chairs.each do |chair| %>
+          <li class="p-4">
+            <div class="flex justify-between">
+              <div>
+                <h2 class="font-bold text-xl"><%= chair.name %></h2>
+                <p class="<%= chair.is_available ? 'text-green-600' : 'text-red-600' %>">
+                  <%= chair.is_available ? 'Available' : 'Not Available' %>
+                </p>
+              </div>
+              <div>
+                <% if chair.barber.present? %>
+                  <p><strong>Assigned to:</strong> <%= chair.barber.email_address %></p>
+                <% else %>
+                  <p>Unassigned</p>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  barber_id: 1
+  client_id: 1
+  start_time: 2026-01-27 15:07:27
+  end_time: 2026-01-27 15:07:27
+  status: MyString
+
+two:
+  barber_id: 1
+  client_id: 1
+  start_time: 2026-01-27 15:07:27
+  end_time: 2026-01-27 15:07:27
+  status: MyString
