@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_27_203315) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_27_232728) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_203315) do
     t.string "status"
     t.string "stripe_charge_id"
     t.datetime "updated_at", null: false
+    t.index ["barber_id"], name: "index_appointments_on_barber_id"
+    t.index ["client_id"], name: "index_appointments_on_client_id"
+    t.index ["status"], name: "index_appointments_on_status"
   end
 
   create_table "chairs", force: :cascade do |t|
@@ -61,6 +64,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_203315) do
     t.string "name"
     t.integer "shop_id"
     t.datetime "updated_at", null: false
+    t.index ["barber_id"], name: "index_chairs_on_barber_id"
+    t.index ["shop_id"], name: "index_chairs_on_shop_id"
   end
 
   create_table "haircuts", force: :cascade do |t|
@@ -69,6 +74,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_203315) do
     t.datetime "created_at", null: false
     t.text "details"
     t.datetime "updated_at", null: false
+    t.index ["barber_id"], name: "index_haircuts_on_barber_id"
+    t.index ["client_id"], name: "index_haircuts_on_client_id"
   end
 
   create_table "shops", force: :cascade do |t|
@@ -77,6 +84,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_203315) do
     t.datetime "created_at", null: false
     t.string "name"
     t.datetime "updated_at", null: false
+    t.index ["barber_id"], name: "index_shops_on_barber_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -89,8 +97,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_203315) do
     t.string "role"
     t.string "uid"
     t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["provider", "uid"], name: "index_users_on_provider_and_uid"
+    t.index ["role"], name: "index_users_on_role"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "appointments", "users", column: "barber_id", on_delete: :cascade
+  add_foreign_key "appointments", "users", column: "client_id", on_delete: :cascade
+  add_foreign_key "chairs", "shops", on_delete: :cascade
+  add_foreign_key "chairs", "users", column: "barber_id", on_delete: :nullify
+  add_foreign_key "haircuts", "users", column: "barber_id", on_delete: :cascade
+  add_foreign_key "haircuts", "users", column: "client_id", on_delete: :cascade
+  add_foreign_key "shops", "users", column: "barber_id", on_delete: :cascade
 end

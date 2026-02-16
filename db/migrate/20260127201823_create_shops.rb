@@ -1,9 +1,9 @@
 class CreateShops < ActiveRecord::Migration[8.1]
   def change
-    create_table :shops do |t|
+    create_table :shops, id: :uuid do |t|
       t.string :name
       t.string :address
-      t.integer :barber_id
+      t.uuid :barber_id
 
       t.timestamps
     end

@@ -9,6 +9,10 @@ class HaircutsController < ApplicationController
     end
   end
 
+  def show
+    @haircut = Haircut.find(params[:id])
+  end
+
   def new
     @haircut = Haircut.new
     if current_user.barber?
@@ -33,6 +37,6 @@ class HaircutsController < ApplicationController
   private
 
   def haircut_params
-    params.require(:haircut).permit(:client_id, :barber_id, :details, :image)
+    params.require(:haircut).permit(:client_id, :barber_id, :details, images: [])
   end
 end

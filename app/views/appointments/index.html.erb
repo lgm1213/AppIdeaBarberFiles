@@ -1,37 +1,88 @@
-<div class="max-w-4xl mx-auto mt-10">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="font-bold text-4xl">Your Appointments</h1>
-    <%= link_to "New Appointment", new_appointment_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+<div class="max-w-5xl mx-auto">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+    <div>
+      <h1 class="font-bold text-3xl text-slate-800">Your Appointments</h1>
+      <p class="text-slate-500 mt-1">Manage your upcoming and past appointments</p>
+    </div>
+    <%= link_to new_appointment_path, class: "inline-flex items-center bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow-md hover:shadow-lg transition-all" do %>
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      New Appointment
+    <% end %>
   </div>
 
   <% if @appointments.empty? %>
-    <p>You don't have any appointments yet.</p>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
+      <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-700 mb-2">No appointments yet</h3>
+      <p class="text-slate-500 mb-6">Schedule your first appointment to get started.</p>
+      <%= link_to "Book an Appointment", new_appointment_path, class: "inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium" %>
+    </div>
   <% else %>
-    <div class="bg-white shadow-md rounded-lg">
-      <ul class="divide-y divide-gray-200">
-        <% @appointments.each do |appointment| %>
-          <li class="p-4">
-            <div class="flex justify-between">
-              <div>
-                <p><strong>Client:</strong> <%= appointment.client.email_address %></p>
-                <p><strong>Barber:</strong> <%= appointment.barber.email_address %></p>
+    <div class="space-y-4">
+      <% @appointments.each do |appointment| %>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow overflow-hidden">
+          <div class="p-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-3 mb-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                      <% if appointment.status == 'confirmed' %>
+                        bg-emerald-100 text-emerald-700
+                      <% elsif appointment.status == 'pending' %>
+                        bg-amber-100 text-amber-700
+                      <% else %>
+                        bg-red-100 text-red-700
+                      <% end %>
+                    ">
+                      <span class="w-1.5 h-1.5 rounded-full mr-1.5
+                        <% if appointment.status == 'confirmed' %>
+                          bg-emerald-500
+                        <% elsif appointment.status == 'pending' %>
+                          bg-amber-500
+                        <% else %>
+                          bg-red-500
+                        <% end %>
+                      "></span>
+                      <%= appointment.status.humanize %>
+                    </span>
+                  </div>
+                  <p class="text-slate-600"><span class="font-medium text-slate-700">Client:</span> <%= appointment.client.email_address %></p>
+                  <p class="text-slate-600"><span class="font-medium text-slate-700">Barber:</span> <%= appointment.barber.email_address %></p>
+                </div>
               </div>
-              <div>
-                <p><strong>From:</strong> <%= appointment.start_time.strftime("%A, %B %d, %Y at %I:%M %p") %></p>
-                <p><strong>To:</strong> <%= appointment.end_time.strftime("%A, %B %d, %Y at %I:%M %p") %></p>
-              </div>
-              <div>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-<%= appointment.status == 'confirmed' ? 'green' : (appointment.status == 'pending' ? 'yellow' : 'red') %>-100 text-<%= appointment.status == 'confirmed' ? 'green' : (appointment.status == 'pending' ? 'yellow' : 'red') %>-800">
-                  <%= appointment.status.humanize %>
-                </span>
-                <% if current_user.client? && appointment.confirmed? && appointment.stripe_charge_id.nil? %>
-                  <%= link_to "Pay #{number_to_currency(appointment.amount / 100.0)}", new_appointment_payment_path(appointment), class: "ml-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-6">
+                <div class="bg-slate-50 rounded-xl px-4 py-3">
+                  <p class="text-xs text-slate-500 uppercase tracking-wide font-medium mb-1">Date & Time</p>
+                  <p class="text-sm text-slate-700 font-medium"><%= appointment.start_time.strftime("%A, %B %d, %Y") %></p>
+                  <p class="text-sm text-slate-600"><%= appointment.start_time.strftime("%I:%M %p") %> - <%= appointment.end_time.strftime("%I:%M %p") %></p>
+                </div>
+
+                <% if current_user.client? && appointment.confirmed? && appointment.stripe_charge_id.nil? && appointment.amount.present? %>
+                  <%= link_to new_appointment_payment_path(appointment), class: "inline-flex items-center justify-center bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-2.5 px-5 rounded-xl shadow-md hover:shadow-lg transition-all" do %>
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                    Pay <%= number_to_currency(appointment.amount / 100.0) %>
+                  <% end %>
                 <% end %>
               </div>
             </div>
-          </li>
-        <% end %>
-      </ul>
+          </div>
+        </div>
+      <% end %>
     </div>
   <% end %>
 </div>

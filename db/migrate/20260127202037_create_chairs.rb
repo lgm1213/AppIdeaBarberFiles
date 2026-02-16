@@ -1,8 +1,8 @@
 class CreateChairs < ActiveRecord::Migration[8.1]
   def change
-    create_table :chairs do |t|
-      t.integer :shop_id
-      t.integer :barber_id
+    create_table :chairs, id: :uuid do |t|
+      t.uuid :shop_id
+      t.uuid :barber_id
       t.string :name
       t.boolean :is_available
 

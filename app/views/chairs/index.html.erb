@@ -1,34 +1,85 @@
-<div class="max-w-4xl mx-auto mt-10">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="font-bold text-4xl">Chairs for <%= @shop.name %></h1>
-    <%= link_to "New Chair", new_shop_chair_path(@shop), class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+<div class="max-w-5xl mx-auto">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <%= link_to shops_path, class: "text-slate-400 hover:text-indigo-600 transition-colors" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+        <% end %>
+        <h1 class="font-bold text-3xl text-slate-800">Chairs for <%= @shop.name %></h1>
+      </div>
+      <p class="text-slate-500">Manage barber chairs and availability</p>
+    </div>
+    <%= link_to new_shop_chair_path(@shop), class: "inline-flex items-center bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow-md hover:shadow-lg transition-all" do %>
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      New Chair
+    <% end %>
   </div>
 
   <% if @chairs.empty? %>
-    <p>This shop doesn't have any chairs yet.</p>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
+      <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-700 mb-2">No chairs yet</h3>
+      <p class="text-slate-500 mb-6">Add your first barber chair to this shop.</p>
+      <%= link_to "Add a Chair", new_shop_chair_path(@shop), class: "inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium" %>
+    </div>
   <% else %>
-    <div class="bg-white shadow-md rounded-lg">
-      <ul class="divide-y divide-gray-200">
-        <% @chairs.each do |chair| %>
-          <li class="p-4">
-            <div class="flex justify-between">
-              <div>
-                <h2 class="font-bold text-xl"><%= chair.name %></h2>
-                <p class="<%= chair.is_available ? 'text-green-600' : 'text-red-600' %>">
-                  <%= chair.is_available ? 'Available' : 'Not Available' %>
-                </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @chairs.each do |chair| %>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow overflow-hidden">
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                </svg>
               </div>
-              <div>
-                <% if chair.barber.present? %>
-                  <p><strong>Assigned to:</strong> <%= chair.barber.email_address %></p>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                <% if chair.is_available %>
+                  bg-emerald-100 text-emerald-700
                 <% else %>
-                  <p>Unassigned</p>
+                  bg-red-100 text-red-700
                 <% end %>
-              </div>
+              ">
+                <span class="w-1.5 h-1.5 rounded-full mr-1.5 <%= chair.is_available ? 'bg-emerald-500' : 'bg-red-500' %>"></span>
+                <%= chair.is_available ? 'Available' : 'Occupied' %>
+              </span>
             </div>
-          </li>
-        <% end %>
-      </ul>
+
+            <h2 class="font-bold text-xl text-slate-800 mb-3"><%= chair.name %></h2>
+
+            <div class="flex items-center text-slate-600">
+              <% if chair.barber.present? %>
+                <div class="flex items-center">
+                  <div class="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-xs mr-2">
+                    <%= chair.barber.first_name&.first&.upcase || 'B' %>
+                  </div>
+                  <div>
+                    <p class="text-xs text-slate-500 uppercase tracking-wide">Assigned to</p>
+                    <p class="text-sm font-medium text-slate-700"><%= chair.barber.email_address %></p>
+                  </div>
+                </div>
+              <% else %>
+                <div class="flex items-center text-slate-400">
+                  <div class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center mr-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                  </div>
+                  <span class="text-sm italic">Unassigned</span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   <% end %>
 </div>
