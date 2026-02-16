@@ -20,6 +20,21 @@ class ChairsController < ApplicationController
     end
   end
 
+  def edit
+    @chair = @shop.chairs.find(params[:id])
+    @barbers = User.barbers
+  end
+
+  def update
+    @chair = @shop.chairs.find(params[:id])
+    if @chair.update(chair_params)
+      redirect_to shop_path(@shop, tab: "staff"), notice: "Chair updated successfully."
+    else
+      @barbers = User.barbers
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def require_barber

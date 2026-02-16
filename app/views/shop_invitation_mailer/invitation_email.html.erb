@@ -1,0 +1,35 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; color: #334155;">
+  <div style="background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 24px;">You're Invited!</h1>
+  </div>
+
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+    <p style="font-size: 16px; line-height: 1.6;">
+      You've been invited to join <strong><%= @shop.name %></strong> as a barber.
+    </p>
+
+    <p style="font-size: 14px; color: #64748b;">
+      <strong>Shop:</strong> <%= @shop.name %><br>
+      <strong>Address:</strong> <%= @shop.address %>
+    </p>
+
+    <% if @invitation.message.present? %>
+      <div style="background: #f8fafc; border-left: 4px solid #6366f1; padding: 12px 16px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+        <p style="margin: 0; font-size: 14px; color: #475569; font-style: italic;"><%= @invitation.message %></p>
+      </div>
+    <% end %>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="<%= @accept_url %>" style="display: inline-block; background: #6366f1; color: white; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; font-size: 16px; margin-right: 10px;">
+        Accept Invitation
+      </a>
+      <a href="<%= @decline_url %>" style="display: inline-block; background: #e2e8f0; color: #475569; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
+        Decline
+      </a>
+    </div>
+
+    <p style="font-size: 12px; color: #94a3b8; text-align: center;">
+      This invitation expires in 7 days. If you didn't expect this email, you can safely ignore it.
+    </p>
+  </div>
+</div>

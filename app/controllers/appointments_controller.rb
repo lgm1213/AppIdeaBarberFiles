@@ -4,6 +4,14 @@ class AppointmentsController < ApplicationController
   def index
     if current_user.barber?
       @appointments = Appointment.where(barber_id: current_user.id)
+    elsif current_user.staff?
+      shop = current_user.staff_shop
+      if shop
+        barber_ids = shop.staff_barbers.pluck(:id)
+        @appointments = Appointment.where(barber_id: barber_ids)
+      else
+        @appointments = Appointment.none
+      end
     else
       @appointments = Appointment.where(client_id: current_user.id)
     end

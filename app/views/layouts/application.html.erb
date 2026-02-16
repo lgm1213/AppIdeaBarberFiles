@@ -23,7 +23,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+  <body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen flex flex-col">
     <header class="bg-white shadow-md border-b border-slate-200">
       <nav class="container mx-auto px-6 py-4">
         <div class="flex justify-between items-center">
@@ -41,8 +41,10 @@
               <div class="hidden md:flex items-center space-x-1">
                 <%= link_to "Haircuts", haircuts_path, class: "px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg font-medium transition-all" %>
                 <%= link_to "Appointments", appointments_path, class: "px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg font-medium transition-all" %>
-                <% if current_user.barber? %>
+                <% if current_user.barber? || current_user.staff? %>
                   <%= link_to "Shops", shops_path, class: "px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg font-medium transition-all" %>
+                <% end %>
+                <% if current_user.barber? %>
                   <%= link_to "Email Clients", new_marketing_campaign_path, class: "px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg font-medium transition-all" %>
                 <% end %>
               </div>
@@ -65,7 +67,7 @@
       </nav>
     </header>
 
-    <main class="container mx-auto mt-8 px-6 pb-12">
+    <main class="container mx-auto px-6 pb-12 flex-grow">
       <% if notice %>
         <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-800 px-5 py-4 rounded-xl shadow-sm flex items-center" role="alert">
           <svg class="w-5 h-5 mr-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,9 +85,10 @@
         </div>
       <% end %>
       <%= yield %>
+      <div style="height: 80px;"></div>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 mt-auto">
+    <footer class="bg-white border-t border-slate-200" style="position: fixed; bottom: 0; width: 100%;">
       <div class="container mx-auto px-6 py-6">
         <div class="flex flex-col md:flex-row justify-between items-center">
           <p class="text-slate-500 text-sm">&copy; <%= Date.current.year %> BarberApp. All rights reserved.</p>
@@ -101,4 +104,3 @@
       </div>
     </footer>
   </body>
-</html>

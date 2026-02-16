@@ -9,9 +9,11 @@ class User < ApplicationRecord
   has_many :shops, foreign_key: "barber_id"
   has_many :haircuts_as_barber, class_name: "Haircut", foreign_key: "barber_id"
   has_many :haircuts_as_client, class_name: "Haircut", foreign_key: "client_id"
+  has_many :shop_members
 
   scope :clients, -> { where(role: "Client") }
   scope :barbers, -> { where(role: "Barber") }
+  scope :staff, -> { where(role: "Staff") }
 
   validates :email_address, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :first_name, presence: true
@@ -33,6 +35,15 @@ class User < ApplicationRecord
 
   def client?
     role == "Client"
+  end
+
+  def staff?
+    role == "Staff"
+  end
+
+  def staff_shop
+    membership = shop_members.active.first
+    membership&.shop
   end
 
   # Unified method to get appointments based on role

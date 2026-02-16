@@ -1,0 +1,142 @@
+<% if current_user.barber? %>
+  <!-- Actions (Owner Only) -->
+  <div class="flex flex-wrap gap-3 mb-6">
+    <%= link_to new_shop_chair_path(@shop), class: "inline-flex items-center bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-xl shadow-md hover:shadow-lg transition-all text-sm" do %>
+      <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      Add Chair
+    <% end %>
+
+    <button type="button" onclick="document.getElementById('invite-barber-form').classList.toggle('hidden')"
+            class="inline-flex items-center bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-2 px-4 rounded-xl shadow-sm transition-all text-sm">
+      <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+      </svg>
+      Invite Barber
+    </button>
+
+    <button type="button" onclick="document.getElementById('invite-staff-form').classList.toggle('hidden')"
+            class="inline-flex items-center bg-white border border-emerald-300 hover:bg-emerald-50 text-emerald-700 font-semibold py-2 px-4 rounded-xl shadow-sm transition-all text-sm">
+      <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+      </svg>
+      Invite Staff
+    </button>
+  </div>
+
+  <!-- Inline Invite Barber Form -->
+  <div id="invite-barber-form" class="hidden mb-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      <h3 class="font-semibold text-lg text-slate-800 mb-4">Invite Barber</h3>
+      <%= form_with model: ShopInvitation.new, url: shop_shop_invitations_path(@shop), class: "space-y-4" do |f| %>
+        <%= f.hidden_field :role_type, value: "barber" %>
+        <div>
+          <%= f.label :email_address, "Email Address", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.email_field :email_address, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "barber@example.com" %>
+        </div>
+        <div>
+          <%= f.label :message, "Personal Message (optional)", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.text_area :message, rows: 3, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "We'd love to have you join our team..." %>
+        </div>
+        <div>
+          <%= f.submit "Send Invitation", class: "inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Inline Invite Staff Form -->
+  <div id="invite-staff-form" class="hidden mb-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-emerald-200 p-6">
+      <h3 class="font-semibold text-lg text-slate-800 mb-4">Invite Staff Member</h3>
+      <%= form_with model: ShopInvitation.new, url: shop_shop_invitations_path(@shop), class: "space-y-4" do |f| %>
+        <%= f.hidden_field :role_type, value: "staff" %>
+        <div>
+          <%= f.label :email_address, "Email Address", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.email_field :email_address, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500", placeholder: "staff@example.com" %>
+        </div>
+        <div>
+          <%= f.label :message, "Personal Message (optional)", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.text_area :message, rows: 3, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500", placeholder: "We'd love to have you help run the shop..." %>
+        </div>
+        <div>
+          <%= f.submit "Send Staff Invitation", class: "inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<!-- Pending Invitations -->
+<% if current_user.barber? && @pending_invitations.any? %>
+  <div class="mb-6">
+    <h3 class="font-semibold text-slate-700 mb-3">Pending Invitations</h3>
+    <div class="space-y-2">
+      <% @pending_invitations.each do |invitation| %>
+        <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between">
+          <div>
+            <span class="text-sm font-medium text-amber-800"><%= invitation.email_address %></span>
+            <span class="text-xs text-amber-600 ml-2">(<%= invitation.role_type.capitalize %>)</span>
+            <span class="text-xs text-amber-600 ml-2">Expires <%= time_ago_in_words(invitation.expires_at) %> from now</span>
+          </div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Pending</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<!-- Staff Members -->
+<% if @staff_members.present? %>
+  <div class="mb-6">
+    <h3 class="font-semibold text-slate-700 mb-3">Staff Members</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <% @staff_members.each do |staff| %>
+        <div class="bg-white rounded-2xl shadow-sm border border-emerald-200 p-5">
+          <div class="flex items-center">
+            <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+              <%= staff.first_name[0].upcase %>
+            </div>
+            <div class="ml-3">
+              <h4 class="font-semibold text-slate-800"><%= staff.first_name %> <%= staff.last_name %></h4>
+              <p class="text-xs text-slate-500"><%= staff.email_address %></p>
+            </div>
+          </div>
+          <span class="inline-flex items-center mt-3 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Staff</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<!-- Chairs Grid -->
+<h3 class="font-semibold text-slate-700 mb-3">Chairs</h3>
+<% if @chairs.any? %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <% @chairs.each do |chair| %>
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+        <div class="flex items-start justify-between mb-3">
+          <h4 class="font-semibold text-slate-800"><%= chair.name %></h4>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= chair.is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+            <%= chair.is_available ? "Available" : "Occupied" %>
+          </span>
+        </div>
+        <p class="text-sm text-slate-500 mb-3">
+          <% if chair.barber %>
+            Assigned to <span class="font-medium text-slate-700"><%= chair.barber.first_name %> <%= chair.barber.last_name %></span>
+          <% else %>
+            <span class="italic">Unassigned</span>
+          <% end %>
+        </p>
+        <% if current_user.barber? %>
+          <%= link_to "Edit", edit_shop_chair_path(@shop, chair), class: "text-sm text-indigo-600 hover:text-indigo-700 font-medium" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
+    <p class="text-slate-500">No chairs yet. Add your first chair to get started.</p>
+  </div>
+<% end %>

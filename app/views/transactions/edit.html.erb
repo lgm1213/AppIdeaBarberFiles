@@ -1,0 +1,59 @@
+<div class="max-w-2xl mx-auto">
+  <div class="mb-6">
+    <%= link_to shop_path(@shop, tab: "revenue"), class: "inline-flex items-center text-slate-500 hover:text-slate-700 text-sm mb-4" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      Back to Revenue
+    <% end %>
+    <h1 class="font-bold text-2xl text-slate-800">Edit Transaction</h1>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+    <%= form_with model: [@shop, @transaction], class: "space-y-4" do |f| %>
+      <% if @transaction.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <ul class="list-disc list-inside text-sm text-red-700">
+            <% @transaction.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :transaction_type, "Type", class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= f.select :transaction_type, [["Income", "income"], ["Expense", "expense"]], {}, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= f.label :category, class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= f.text_field :category, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= f.label :amount_cents, "Amount (in cents)", class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= f.number_field :amount_cents, min: 1, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= f.label :description, class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= f.text_area :description, rows: 3, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= f.label :transaction_date, "Date", class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= f.date_field :transaction_date, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= f.label :barber_id, "Barber (optional)", class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= f.select :barber_id, @barbers.map { |b| ["#{b.first_name} #{b.last_name}", b.id] }, { include_blank: "None" }, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div class="pt-2">
+        <%= f.submit "Update Transaction", class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

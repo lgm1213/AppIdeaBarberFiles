@@ -1,0 +1,76 @@
+<div class="max-w-2xl mx-auto">
+  <div class="mb-6">
+    <%= link_to shop_path(@shop, tab: "inventory"), class: "inline-flex items-center text-slate-500 hover:text-slate-700 text-sm mb-4" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      Back to Inventory
+    <% end %>
+    <h1 class="font-bold text-2xl text-slate-800">Edit <%= @inventory_item.name %></h1>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+    <%= form_with model: [@shop, @inventory_item], class: "space-y-4" do |f| %>
+      <% if @inventory_item.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <ul class="list-disc list-inside text-sm text-red-700">
+            <% @inventory_item.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :name, class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= f.text_field :name, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= f.label :description, class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= f.text_area :description, rows: 2, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <%= f.label :quantity, class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.number_field :quantity, min: 0, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= f.label :low_stock_threshold, "Low Stock Threshold", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.number_field :low_stock_threshold, min: 0, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= f.label :unit, "Unit (e.g. bottles)", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.text_field :unit, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <%= f.label :vendor_name, "Vendor Name", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.text_field :vendor_name, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= f.label :vendor_contact, "Vendor Contact", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.text_field :vendor_contact, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <%= f.label :reorder_cost_cents, "Reorder Cost (in cents)", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.number_field :reorder_cost_cents, min: 0, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= f.label :sku, "SKU", class: "block text-sm font-medium text-slate-700 mb-1" %>
+          <%= f.text_field :sku, class: "w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <%= f.submit "Update Item", class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

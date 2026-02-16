@@ -7,8 +7,14 @@ Rails.application.routes.draw do
   get "/auth/failure", to: "omniauth_callbacks#failure"
 
   resources :shops do
-    resources :chairs, only: [ :index, :new, :create ]
+    resources :chairs, only: [ :index, :new, :create, :edit, :update ]
+    resources :transactions
+    resources :inventory_items
+    resources :shop_invitations, only: [ :create ]
   end
+
+  get "/invitations/:token/accept", to: "shop_invitations#accept", as: :accept_invitation
+  get "/invitations/:token/decline", to: "shop_invitations#decline", as: :decline_invitation
 
   resources :appointments do
     resources :payments, only: [ :new, :create ]

@@ -1,0 +1,95 @@
+<!-- Alerts and Actions -->
+<div class="flex flex-wrap items-center gap-3 mb-6">
+  <%= link_to new_shop_inventory_item_path(@shop), class: "inline-flex items-center bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-xl shadow-md hover:shadow-lg transition-all text-sm" do %>
+    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+    </svg>
+    Add Item
+  <% end %>
+
+  <% if @low_stock_count > 0 %>
+    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+      <%= @low_stock_count %> Low Stock
+    </span>
+  <% end %>
+
+  <% if @out_of_stock_count > 0 %>
+    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+      <%= @out_of_stock_count %> Out of Stock
+    </span>
+  <% end %>
+</div>
+
+<!-- Inventory Table -->
+<% if @inventory_items.any? %>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Item</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Stock</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Vendor</th>
+            <th class="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Reorder Cost</th>
+            <th class="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% @inventory_items.each do |item| %>
+            <tr>
+              <td class="px-4 py-3">
+                <div class="text-sm font-medium text-slate-800"><%= item.name %></div>
+                <% if item.description.present? %>
+                  <div class="text-xs text-slate-500"><%= item.description %></div>
+                <% end %>
+                <% if item.sku.present? %>
+                  <div class="text-xs text-slate-400">SKU: <%= item.sku %></div>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-sm text-slate-600">
+                <%= item.quantity %><%= " #{item.unit}" if item.unit.present? %>
+                <div class="text-xs text-slate-400">Threshold: <%= item.low_stock_threshold %></div>
+              </td>
+              <td class="px-4 py-3">
+                <% case item.stock_status %>
+                <% when "out_of_stock" %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Out of Stock</span>
+                <% when "low_stock" %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Low Stock</span>
+                <% else %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">In Stock</span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-sm text-slate-600">
+                <% if item.vendor_name.present? %>
+                  <div><%= item.vendor_name %></div>
+                  <% if item.vendor_contact.present? %>
+                    <div class="text-xs text-slate-400"><%= item.vendor_contact %></div>
+                  <% end %>
+                <% else %>
+                  <span class="text-slate-400">—</span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-sm text-right text-slate-600">
+                <% if item.reorder_cost_dollars %>
+                  $<%= number_with_precision(item.reorder_cost_dollars, precision: 2, delimiter: ',') %>
+                <% else %>
+                  —
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-sm text-right space-x-2">
+                <%= link_to "Edit", edit_shop_inventory_item_path(@shop, item), class: "text-indigo-600 hover:text-indigo-700 font-medium" %>
+                <%= link_to "Delete", shop_inventory_item_path(@shop, item), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-700 font-medium" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% else %>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
+    <p class="text-slate-500">No inventory items yet. Add products to start tracking your stock.</p>
+  </div>
+<% end %>
